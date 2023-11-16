@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yahtzee</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        button#GenereerKnop {
+            background-color: #27ae60;
+        }
+
+        button#HoldButton0,
+        button#HoldButton1,
+        button#HoldButton2,
+        button#HoldButton3,
+        button#HoldButton4 {
+            background-color: #e74c3c;
+        }
+
+        table#scoreTable {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Yahtzee Game</h1>
+    <button id="GenereerKnop" onclick="rollDice()">Roll!</button>
+    <div id="output"></div>
+
+    <table>
+        <tr>
+            <th>Dice 1</th>
+            <th>Dice 2</th>
+            <th>Dice 3</th>
+            <th>Dice 4</th>
+            <th>Dice 5</th>
+        </tr>
+        <tr id="resultaten">
+            <td id="FirstDie">0</td>
+            <td id="SecondDie">0</td>
+            <td id="ThirdDie">0</td>
+            <td id="FourthDie">0</td>
+            <td id="FifthDie">0</td>
+        </tr>
+        <tr>
+            <td><button id="HoldButton0" onclick="toggleHold(0)">Hold</button></td>
+            <td><button id="HoldButton1" onclick="toggleHold(1)">Hold</button></td>
+            <td><button id="HoldButton2" onclick="toggleHold(2)">Hold</button></td>
+            <td><button id="HoldButton3" onclick="toggleHold(3)">Hold</button></td>
+            <td><button id="HoldButton4" onclick="toggleHold(4)">Hold</button></td>
+        </tr>
+    </table>
+
+    <h2>Scores</h2>
+<table id="scoreTable">
+    <tr>
+        <th>Category</th>
+        <th>Score</th>
+    </tr>
+    <tr>
+        <td>Ones</td>
+        <td id="OnesScore">0</td>
+    </tr>
+    <tr>
+        <td>Twos</td>
+        <td id="TwosScore">0</td>
+    </tr>
+    <tr>
+        <td>Threes</td>
+        <td id="ThreesScore">0</td>
+    </tr>
+    <tr>
+        <td>Fours</td>
+        <td id="FoursScore">0</td>
+    </tr>
+    <tr>
+        <td>Fives</td>
+        <td id="FivesScore">0</td>
+    </tr>
+    <tr>
+        <td>Sixes</td>
+        <td id="SixesScore">0</td>
+    </tr>
+    <tr>
+        <td>Three of a Kind</td>
+        <td id="ThreeOfAKindScore">0</td>
+    </tr>
+    <tr>
+        <td>Four of a Kind</td>
+        <td id="FourOfAKindScore">0</td>
+    </tr>
+    <tr>
+        <td>Full House</td>
+        <td id="FullHouseScore">0</td>
+    </tr>
+    <tr>
+        <td>Small Straight</td>
+        <td id="SmallStraightScore">0</td>
+    </tr>
+    <tr>
+        <td>Large Straight</td>
+        <td id="LargeStraightScore">0</td>
+    </tr>
+    <tr>
+        <td>Chance</td>
+        <td id="ChanceScore">0</td>
+    </tr>
+    <tr>
+        <td>Yahtzee</td>
+        <td id="YahtzeeScore">0</td>
+    </tr>
+</table>
+
+    <script>
+        let diceArray = [0, 0, 0, 0, 0];
+        let heldDice = [false, false, false, false, false]; // To keep track of held dice
+        let rollButton = document.getElementById("GenereerKnop");
+
+        function toggleHold(dieIndex) {
+            heldDice[dieIndex] = !heldDice[dieIndex];
+            updateHoldButtonLabel(dieIndex);
+        }
+
+        function updateHoldButtonLabel(dieIndex) {
+            const holdButton = document.getElementById(`HoldButton${dieIndex}`);
+            if (heldDice[dieIndex]) {
+                holdButton.textContent = "Release";
+            } else {
+                holdButton.textContent = "Hold";
+            }
+        }
+
+        function rollDice() {
+            if (heldDice.includes(false)) {
+                for (let i = 0; i < diceArray.length; i++) {
+                    if (!heldDice[i]) {
+                        diceArray[i] = Math.floor(Math.random() * 6) + 1;
+                    }
+                }
+                updateDiceValues();
+                calculateScore();
+            }
+        }
+
+        function updateDiceValues() {
+            for (let i = 0; i < diceArray.length; i++) {
+                document.getElementById(`FirstDie`).innerHTML = diceArray[0];
+                document.getElementById(`SecondDie`).innerHTML = diceArray[1];
+                document.getElementById(`ThirdDie`).innerHTML = diceArray[2];
+                document.getElementById(`FourthDie`).innerHTML = diceArray[3];
+                document.getElementById(`FifthDie`).innerHTML = diceArray[4];
+            }
+        }
+
+function calculateScore() {
+    const diceValues = diceArray;
+
+    function countDice(target) {
+        return diceArray.filter(die => die === target).reduce((acc, curr) => acc + curr, 0);
+    }
+
+    document.getElementById("OnesScore").innerHTML = countDice(1) * 1;
+
+    document.getElementById("TwosScore").innerHTML = countDice(2) * 2;
+    document.getElementById("ThreesScore").innerHTML = countDice(3) * 3;
+    document.getElementById("FoursScore").innerHTML = countDice(4) * 4;
+    document.getElementById("FivesScore").innerHTML = countDice(5) * 5;
+    document.getElementById("SixesScore").innerHTML = countDice(6) * 6;
+
+    // three of a kind
+    const threeOfAKindScore = diceArray.reduce((acc, curr) => acc + curr, 0);
+    document.getElementById("ThreeOfAKindScore").innerHTML = threeOfAKindScore;
+
+    // four of a kind
+    const fourOfAKindScore = diceArray.reduce((acc, curr) => acc + curr, 0);
+    document.getElementById("FourOfAKindScore").innerHTML = fourOfAKindScore;
+
+    // full huse
+    const uniqueValues = [...new Set(diceArray)];
+    const fullHouseScore = uniqueValues.length === 2 ? 25 : 0;
+    document.getElementById("FullHouseScore").innerHTML = fullHouseScore;
+
+    // small straight
+    const smallStraightScore = calculateStraightScore([1, 2, 3, 4]) || calculateStraightScore([2, 3, 4, 5]) || calculateStraightScore([3, 4, 5, 6]) || 0;
+    document.getElementById("SmallStraightScore").innerHTML = smallStraightScore;
+
+    // large Straight
+    const largeStraightScore = calculateStraightScore([1, 2, 3, 4, 5]) || calculateStraightScore([2, 3, 4, 5, 6]) || 0;
+    document.getElementById("LargeStraightScore").innerHTML = largeStraightScore;
+
+    // chance
+    const chanceScore = diceArray.reduce((acc, curr) => acc + curr, 0);
+    document.getElementById("ChanceScore").innerHTML = chanceScore;
+
+    // yahtzee
+    const yahtzeeScore = diceArray.every(die => die === diceArray[0]) ? 50 : 0;
+    document.getElementById("YahtzeeScore").innerHTML = yahtzeeScore;
+}
+
+function calculateStraightScore(straightPattern) {
+    const sortedDice = diceArray.slice().sort((a, b) => a - b);
+    for (let i = 0; i <= sortedDice.length - straightPattern.length; i++) {
+        const slice = sortedDice.slice(i, i + straightPattern.length);
+        if (slice.every((value, index) => value === straightPattern[index])) {
+            return straightPattern.reduce((acc, curr) => acc + curr, 0);
+        }
+    }
+    return 0;
+}
+
+
+        function countDice(target) {
+            return diceArray.filter(die => die === target).reduce((acc, curr) => acc + curr, 0);
+        }
+
+        function initHoldButtons() {
+            for (let i = 0; i < diceArray.length; i++) {
+                const holdButton = document.createElement("button");
+                holdButton.id = `HoldButton${i}`;
+                holdButton.textContent = "Hold";
+                holdButton.onclick = () => toggleHold(i);
+                document.body.appendChild(holdButton);
+            }
+        }
+
+        updateDiceValues(); // updates the dice values
+        updateHoldButtonLabel(); //update the button holds
+        initHoldButtons(); // let you hold the button
+        calculateScore();  // update the scores after rolling the dice
+
+</script>
+</body>
+</html>
