@@ -153,7 +153,7 @@
 
     <script>
         let diceArray = [0, 0, 0, 0, 0];
-        let heldDice = [false, false, false, false, false]; // To keep track of held dice
+        let heldDice = [false, false, false, false, false]; // Om de vastgehouden dobbelstenen bij te houden
         let rollButton = document.getElementById("GenereerKnop");
 
         function toggleHold(dieIndex) {
@@ -192,15 +192,33 @@
             }
         }
 
+
+
+
+// documen.getElementById is: het selecteerd een element waarvan de id gelijk is aan de parameter
+// parameter is een type string. 
+// string: slaat iets op 
+// If statement: kijkt naar de waarde van iets
+// For: het herhaalt je bepaalde code 
+// Met If en Else kan je steeds op het waar of niet/waar zijn van een vergelijking
+// ++ is een functie die voegt er 1 extra aan toe
+// Let: kondigd een variabele aan 
+// i is een teller die bij houd hoevaak je code rund
+// true: is een waarde die waar word gezien
+// false: is een waarde die als niet waar word gezien
+// fuction: geeft instructies om de code uit te voeren 
+
+
+
+
 function calculateScore() {
     const diceValues = diceArray;
 
     function countDice(target) {
-        return diceArray.filter(die => die === target).reduce((acc, curr) => acc + curr, 0);
-    }
+        return diceArray.reduce((acc, die) => (die === target ? acc + die : acc), 0);
+    }//Deze code gebruikt de reduce functie om de diceArray te herhalen. voegt waarde toe aan accumulator "de waarde van de nummers"
 
     document.getElementById("OnesScore").innerHTML = countDice(1) * 1;
-
     document.getElementById("TwosScore").innerHTML = countDice(2) * 2;
     document.getElementById("ThreesScore").innerHTML = countDice(3) * 3;
     document.getElementById("FoursScore").innerHTML = countDice(4) * 4;
